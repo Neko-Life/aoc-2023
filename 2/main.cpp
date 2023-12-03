@@ -154,15 +154,17 @@ int main() {
       should_parse_set = false;
     }
 
-    bool nlfound = c == '\n';
+    bool nlfound = c == '\n', semifound = c == ';';
 
-    if (nlfound || c == ';') {
+    if (nlfound || semifound) {
       game.sets.push_back(game_set);
       game_set.r = 0;
       game_set.g = 0;
       game_set.b = 0;
 
-      should_parse_set = true;
+      if (semifound) {
+        should_parse_set = true;
+      }
     }
 
     if (nlfound) {
@@ -217,11 +219,13 @@ int main() {
   for (const auto &game : games) {
     game_set_t cur = {0, 0, 0};
     for (const auto &set : game.sets) {
+
 #ifdef DEBUG
-    std::cerr << "\nset.r(" << set.r << ")\n";
-    std::cerr << "set.g(" << set.g << ")\n";
-    std::cerr << "set.b(" << set.b << ")\n";
+      std::cerr << "\nset.r(" << set.r << ")\n";
+      std::cerr << "set.g(" << set.g << ")\n";
+      std::cerr << "set.b(" << set.b << ")\n";
 #endif
+
       if (set.r > cur.r) {
         cur.r = set.r;
       }
@@ -239,6 +243,12 @@ int main() {
     std::cerr << "r(" << cur.r << ") g(" << cur.g << ") b(" << cur.b << ") pow("
               << pow << ")\n";
 #endif
+    /*
+    #ifdef DEBUG
+        std::cerr << cur.r << " " << cur.g << " " << cur.b << " " << pow <<
+    "\n"; #endif
+    */
+
     sets_sum += pow;
   }
 
