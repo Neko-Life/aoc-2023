@@ -6,3 +6,6 @@ all: main
 
 main: main.cpp
 	g++ $(PREPROCESSOR_FLAGS) main.cpp -o main
+
+clean:
+	rm main
