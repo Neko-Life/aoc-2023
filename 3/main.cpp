@@ -10,10 +10,20 @@ constexpr const char *default_inpfile = "input.txt";
 
 bool is_digit(char c) { return (c >= '0') && (c <= '9'); }
 
+bool num_pos_t_eq(const num_pos_t &npt1, const num_pos_t &npt2,
+                  bool cmp_sym = false) {
+  bool sym_yes = cmp_sym ? (npt1.sym == npt2.sym &&
+                            npt1.sym_line_idx == npt2.sym_line_idx &&
+                            npt1.sym_x_idx == npt2.sym_x_idx)
+                         : true;
+
+  return npt1.line_idx == npt2.line_idx && npt1.first_idx == npt2.first_idx &&
+         npt1.last_idx == npt2.last_idx && sym_yes;
+}
+
 bool has_pos(const std::vector<num_pos_t> &pos_list, const num_pos_t &npt) {
   for (const auto &i : pos_list) {
-    if (i.line_idx == npt.line_idx && i.first_idx == npt.first_idx &&
-        i.last_idx == npt.last_idx)
+    if (num_pos_t_eq(i, npt))
       return true;
   }
 
