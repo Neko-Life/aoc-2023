@@ -110,7 +110,7 @@ int main() {
   long fsiz = ftell(input);
   fseek(input, 0, SEEK_SET);
 
-  char *buf = (char *)malloc(sizeof(char) * fsiz + 1);
+  char *buf = (char *)malloc(sizeof(char) * (fsiz + 1));
   ssize_t readsiz = fread(buf, 1, fsiz, input);
   buf[readsiz] = '\0';
   fclose(input);
