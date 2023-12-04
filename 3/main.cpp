@@ -307,6 +307,22 @@ int main(const int argc, const char *argv[]) {
 
   std::cout << "\nSum: " << sum << "\n\n";
 
+  // part 2
+  std::vector<num_pos_t> pos_w_gears;
+  for (const auto &p : pos_list) {
+    if (p.sym == '*') {
+      pos_w_gears.push_back(p);
+
+      size_t n = get_number_from_num_pos_t(lines, p);
+#ifdef DEBUG
+      std::cerr << "Gear: line(" << p.line_idx << ") first(" << p.first_idx
+                << ") last(" << p.last_idx << ") val(" << n << ") sym(" << p.sym
+                << ") sym_ln(" << p.sym_line_idx << ") sym_x(" << p.sym_x_idx
+                << ")\n";
+#endif
+    }
+  }
+
   size_t sum_gears = 0;
 
   std::cout << "\nSum gears: " << sum_gears << "\n\n";
