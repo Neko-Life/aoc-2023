@@ -38,7 +38,7 @@ size_t get_number_from_num_pos_t(const std::vector<std::string> &lines,
 
 // this algorithm is absolute and will always work,
 // if not then it's ur fault for providing wrong/invalid argument!
-// the line_idx of the return value must by set by the caller
+// the line_idx, and sym* of the return value must by set by the caller
 num_pos_t get_num_pos_t_from_part(size_t initial_idx, const std::string &line) {
   // seek left and right for the whole number
   size_t idx_first = initial_idx;
@@ -60,7 +60,13 @@ num_pos_t get_num_pos_t_from_part(size_t initial_idx, const std::string &line) {
   while ((++idx_last) <= max_x && is_digit(line.at(idx_last)))
     ;
 
-  return {0, idx_first, idx_last};
+  return {0, idx_first, idx_last, 0, 0, 0};
+}
+
+void set_num_pos_t_syms(num_pos_t &npt, char c, size_t line, size_t x) {
+  npt.sym = c;
+  npt.sym_line_idx = line;
+  npt.sym_x_idx = x;
 }
 
 int main(const int argc, const char *argv[]) {
@@ -178,6 +184,7 @@ int main(const int argc, const char *argv[]) {
           if (is_digit(part)) {
             num_pos_t npt = get_num_pos_t_from_part(left_idx, top_line);
             npt.line_idx = top_line_idx;
+            set_num_pos_t_syms(npt, lc, i, j);
 
             store_pos(pos_list, npt);
           }
@@ -188,6 +195,7 @@ int main(const int argc, const char *argv[]) {
         if (is_digit(part)) {
           num_pos_t npt = get_num_pos_t_from_part(j, top_line);
           npt.line_idx = top_line_idx;
+          set_num_pos_t_syms(npt, lc, i, j);
 
           store_pos(pos_list, npt);
         }
@@ -198,6 +206,7 @@ int main(const int argc, const char *argv[]) {
           if (is_digit(part)) {
             num_pos_t npt = get_num_pos_t_from_part(right_idx, top_line);
             npt.line_idx = top_line_idx;
+            set_num_pos_t_syms(npt, lc, i, j);
 
             store_pos(pos_list, npt);
           }
@@ -213,6 +222,7 @@ int main(const int argc, const char *argv[]) {
         if (is_digit(part)) {
           num_pos_t npt = get_num_pos_t_from_part(left_idx, line);
           npt.line_idx = i;
+          set_num_pos_t_syms(npt, lc, i, j);
 
           store_pos(pos_list, npt);
         }
@@ -224,6 +234,7 @@ int main(const int argc, const char *argv[]) {
         if (is_digit(part)) {
           num_pos_t npt = get_num_pos_t_from_part(right_idx, line);
           npt.line_idx = i;
+          set_num_pos_t_syms(npt, lc, i, j);
 
           store_pos(pos_list, npt);
         }
@@ -241,6 +252,7 @@ int main(const int argc, const char *argv[]) {
           if (is_digit(part)) {
             num_pos_t npt = get_num_pos_t_from_part(left_idx, bottom_line);
             npt.line_idx = bottom_line_idx;
+            set_num_pos_t_syms(npt, lc, i, j);
 
             store_pos(pos_list, npt);
           }
@@ -251,6 +263,7 @@ int main(const int argc, const char *argv[]) {
         if (is_digit(part)) {
           num_pos_t npt = get_num_pos_t_from_part(j, bottom_line);
           npt.line_idx = bottom_line_idx;
+          set_num_pos_t_syms(npt, lc, i, j);
 
           store_pos(pos_list, npt);
         }
@@ -261,6 +274,7 @@ int main(const int argc, const char *argv[]) {
           if (is_digit(part)) {
             num_pos_t npt = get_num_pos_t_from_part(right_idx, bottom_line);
             npt.line_idx = bottom_line_idx;
+            set_num_pos_t_syms(npt, lc, i, j);
 
             store_pos(pos_list, npt);
           }
@@ -276,11 +290,16 @@ int main(const int argc, const char *argv[]) {
     sum += n;
 #ifdef DEBUG
     std::cerr << "line(" << p.line_idx << ") first(" << p.first_idx << ") last("
-              << p.last_idx << ") val(" << n << ")\n";
+              << p.last_idx << ") val(" << n << ") sym(" << p.sym << ") sym_ln("
+              << p.sym_line_idx << ") sym_x(" << p.sym_x_idx << ")\n";
 #endif
   }
 
   std::cout << "\nSum: " << sum << "\n\n";
+
+  size_t sum_gears = 0;
+
+  std::cout << "\nSum gears: " << sum_gears << "\n\n";
 
   return 0;
 }
