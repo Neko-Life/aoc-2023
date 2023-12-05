@@ -17,9 +17,11 @@ void get_num_list_from_str(std::vector<int> &list,
       break;
 
     char c = list_str.at(i);
+    /*
 #ifdef DEBUG
     std::cerr << "char(" << c << ")\n";
 #endif
+*/
 
     bool last_idx = (size_t)i == (llen - 1);
     if ((!is_digit(c) || last_idx) && first_idx >= 0) {
@@ -27,9 +29,11 @@ void get_num_list_from_str(std::vector<int> &list,
           list_str.substr(first_idx, (i + (last_idx ? 1 : 0)) - first_idx);
       first_idx = -1;
 
+      /*
 #ifdef DEBUG
       std::cerr << "got(" << s << ")\n";
 #endif
+*/
 
       list.push_back(stoi(s));
       continue;
@@ -50,9 +54,15 @@ int main(const int argc, const char *argv[]) {
 
   size_t total_point = 0;
 
+  std::vector<std::string> lines;
+
   // iterate each line
   std::string line;
   while (std::getline(input_strm, line)) {
+    lines.push_back(line);
+  }
+
+  for (const std::string &line : lines) {
 #ifdef DEBUG
     std::cerr << line << '\n';
 #endif
