@@ -10,12 +10,14 @@ constexpr const char *default_inpfile = "input.txt";
 
 bool is_digit(char c) { return (c >= '0') && (c <= '9'); }
 
+bool num_pos_t_syms_eq(const num_pos_t &npt1, const num_pos_t &npt2) {
+  return npt1.sym == npt2.sym && npt1.sym_line_idx == npt2.sym_line_idx &&
+         npt1.sym_x_idx == npt2.sym_x_idx;
+}
+
 bool num_pos_t_eq(const num_pos_t &npt1, const num_pos_t &npt2,
                   bool cmp_sym = false) {
-  bool sym_yes = cmp_sym ? (npt1.sym == npt2.sym &&
-                            npt1.sym_line_idx == npt2.sym_line_idx &&
-                            npt1.sym_x_idx == npt2.sym_x_idx)
-                         : true;
+  bool sym_yes = cmp_sym ? num_pos_t_syms_eq(npt1, npt2) : true;
 
   return npt1.line_idx == npt2.line_idx && npt1.first_idx == npt2.first_idx &&
          npt1.last_idx == npt2.last_idx && sym_yes;
@@ -313,8 +315,9 @@ int main(const int argc, const char *argv[]) {
     if (p.sym == '*') {
       pos_w_gears.push_back(p);
 
-      size_t n = get_number_from_num_pos_t(lines, p);
 #ifdef DEBUG
+      size_t n = get_number_from_num_pos_t(lines, p);
+
       std::cerr << "Gear: line(" << p.line_idx << ") first(" << p.first_idx
                 << ") last(" << p.last_idx << ") val(" << n << ") sym(" << p.sym
                 << ") sym_ln(" << p.sym_line_idx << ") sym_x(" << p.sym_x_idx
@@ -324,6 +327,67 @@ int main(const int argc, const char *argv[]) {
   }
 
   size_t sum_gears = 0;
+
+  size_t pos_w_gears_len = pos_w_gears.size();
+
+  std::vector<num_pos_t> processed_gears;
+  processed_gears.reserve(pos_w_gears_len);
+
+  for (size_t i = 0; i < pos_w_gears_len; i++) {
+    const auto &p = pos_w_gears.at(i);
+
+    // skip already processed gears
+    bool skip = false;
+    for (const auto &pcmp : processed_gears) {
+      if (num_pos_t_syms_eq(p, pcmp)) {
+        skip = true;
+        break;
+      }
+    }
+
+    if (skip)
+      continue;
+
+    std::vector<num_pos_t> current_processing;
+    current_processing.reserve(pos_w_gears_len);
+
+    for (size_t j = i + 1; j < pos_w_gears_len; j++) {
+      const auto &p2 = pos_w_gears.at(j);
+
+      if (num_pos_t_syms_eq(p, p2)) {
+        current_processing.push_back(p2);
+      }
+    }
+
+    processed_gears.push_back(p);
+
+    size_t processing_len = current_processing.size();
+
+#ifdef DEBUG
+    std::cerr << "processing_len(" << (processing_len + 1) << ")" << '\n';
+#endif
+
+    if (!processing_len)
+      continue;
+
+    current_processing.push_back(p);
+
+    // need 1 nested loop i think
+    //
+    // no, as observed in the input there will be no more than 2
+    // adjacent part number for each gear(*), therefore no need
+    // nested loop to accomodate case for 2+ adjacent part number
+    //
+    // actually it's explained in the problem, always know your
+    // exact problem folks
+
+    // loop to calculate gears ratio in every current_processing
+    const auto &g1 = current_processing.at(0);
+    const auto &g2 = current_processing.at(1);
+
+    sum_gears += (get_number_from_num_pos_t(lines, g1) *
+                  get_number_from_num_pos_t(lines, g2));
+  }
 
   std::cout << "\nSum gears: " << sum_gears << "\n\n";
 
